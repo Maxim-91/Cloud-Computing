@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Object Scanner Checklist</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+        h1 { color: #1a73e8; margin-bottom: 10px; }
+        p { color: #5f6368; margin-bottom: 25px; }
+        
+        #webcam-container { border: 6px solid #ffffff; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; background: #fff; line-height: 0; }
+        
+        .checklist { margin-top: 30px; background: white; padding: 25px; border-radius: 15px; width: 320px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .item { font-size: 20px; margin: 12px 0; color: #bdc3c7; display: flex; align-items: center; transition: all 0.5s ease; }
+        
+        /* Стиль для найденного предмета */
+        .found { color: #2ecc71; font-weight: bold; transform: scale(1.05); }
+        .status-icon { margin-right: 15px; font-size: 24px; }
+
+        button { background: #1a73e8; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 6px rgba(26,115,232,0.3); }
+        button:hover { background: #1557b0; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <h1>Object Detector AI</h1>
+    <p>Show the object to the camera to check it off the list</p>
+    
+    <button type="button" onclick="init()">Launch Camera</button>
+
+    <div id="webcam-container"></div>
+
+    <div class="checklist">
+        <div id="list-Glass" class="item"><span class="status-icon">○</span> Glass</div>
+        <div id="list-Cup" class="item"><span class="status-icon">○</span> Cup</div>
+        <div id="list-Table" class="item"><span class="status-icon">○</span> Table</div>
+        <div id="list-Chair" class="item"><span class="status-icon">○</span> Chair</div>
+        <div id="list-Sofa" class="item"><span class="status-icon">○</span> Sofa</div>
+        <div id="list-Candle" class="item"><span class="status-icon">○</span> Candle</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+    <script type="text/javascript">
+        // Путь указывает на твою подпапку
+        const URL = "./my_model/";
+
+        let model, webcam, maxPredictions;
+
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            // Загрузка модели
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Настройка веб-камеры
+            const flip = true;
+            webcam = new tmImage.Webcam(320, 320, flip);
+            await webcam.setup();
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            // Добавление холста камеры в контейнер
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            
+            for (let i = 0; i < maxPredictions; i++) {
+                const className = prediction[i].className; // Например: Glass
+                const probability = prediction[i].probability.toFixed(2);
+
+                // Если уверенность модели выше 95%
+                if (probability > 0.95) {
+                    const element = document.getElementById("list-" + className);
+                    if (element && !element.classList.contains("found")) {
+                        element.classList.add("found");
+                        // Меняем иконку на галочку
+                        element.querySelector(".status-icon").innerText = "●";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
