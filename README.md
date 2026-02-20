@@ -51,7 +51,7 @@ The objective was to apply a state-of-the-art model to various textual phenomena
 
 ### Testing Scenarios & Results
 The model was stress-tested against three specific categories:
-1.  **Typos and Letter Permutations**: While the model handles simple repetitions (e.g., "loooove"), it suffers a critical loss of accuracy when letters are shuffled or replaced by numbers (e.g., "gr8"), showing a heavy reliance on standard spelling.
+1.  **Typos**: While the model handles simple repetitions (e.g., "loooove"), it suffers a critical loss of accuracy when letters are shuffled or replaced by numbers (e.g., "gr8"), showing a heavy reliance on standard spelling.
 2.  **Modern Slang**: The model struggles with linguistic shifts, often misclassifying positive slang (e.g., "slaps") as negative.
 3.  **Irony and Sarcasm**: This was the model's greatest weakness. Every ironical statement was misclassified because the model interprets keywords literally and ignores broader context or negations.
 
