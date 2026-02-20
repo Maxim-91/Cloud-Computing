@@ -38,6 +38,27 @@ The model to classify text reviews into three categories: **positive**, **neutra
 * **Accuracy**: The model achieved an overall accuracy of 64%.
 * **Performance**: The model is most effective at identifying "positive" sentiments (F1-score of 0.71).
 * **Observation**: Manual testing showed that while the model excels at identifying explicit emotional cues (e.g., "happy", "hate"), it can struggle with subtle context or ambiguous phrasing.
+---
 
+# Module 2 Bonus: Testing the limits of existing sentiment models
+This bonus task involves a critical evaluation of a pre-trained sentiment analysis model from the Hugging Face Hub, exploring its performance and limitations when faced with non-standard text.
+The objective was to apply a state-of-the-art model to various textual phenomena — such as typos, slang, and irony — to understand how "noisy" data affects classification accuracy in real-world NLP systems.
+
+### Tech Stack
+* **Model**: [`distilbert-base-uncased-finetuned-sst-2-english` (DistilBERT)](https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english)
+* **Platform**: Google Colab with the Hugging Face `transformers` library
+* **Framework**: Python pipeline API for seamless integration of pre-trained models
+
+### Testing Scenarios & Results
+The model was stress-tested against three specific categories:
+1.  **Typos and Letter Permutations**: While the model handles simple repetitions (e.g., "loooove"), it suffers a critical loss of accuracy when letters are shuffled or replaced by numbers (e.g., "gr8"), showing a heavy reliance on standard spelling.
+2.  **Modern Slang**: The model struggles with linguistic shifts, often misclassifying positive slang (e.g., "slaps") as negative.
+3.  **Irony and Sarcasm**: This was the model's greatest weakness. Every ironical statement was misclassified because the model interprets keywords literally and ignores broader context or negations.
+
+### Key Conclusions
+* **Literal Interpretation**: The model's tokenizer and architecture rely significantly on standard word forms and struggle with contextual nuances.
+* **Real-World Application**: Without specific fine-tuning, using such models for social media monitoring or customer support can lead to erroneous decisions due to the misinterpretation of sarcasm and informal speech.
+
+---
 
 
